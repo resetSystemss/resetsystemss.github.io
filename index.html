@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ikki budget — Smart Budget Tracker</title>
+  <meta name="description" content="Track expenses, manage budgets, and split costs with friends." />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --primary: #1a1a2e;
+      --accent: #4f6ef7;
+      --accent-light: #eef1ff;
+      --text: #1a1a2e;
+      --muted: #6b7280;
+      --border: #e5e7eb;
+      --radius: 12px;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      color: var(--text);
+      background: #fff;
+      line-height: 1.6;
+    }
+
+    /* NAV */
+    nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+
+    .logo {
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--primary);
+      letter-spacing: -0.5px;
+    }
+    .logo span { color: var(--accent); }
+
+    .lang-switcher {
+      display: flex;
+      gap: 0.25rem;
+      flex-wrap: wrap;
+    }
+    .lang-switcher button {
+      background: none;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.25rem 0.6rem;
+      font-size: 0.75rem;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.15s;
+    }
+    .lang-switcher button:hover,
+    .lang-switcher button.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: #fff;
+    }
+
+    /* HERO */
+    .hero {
+      text-align: center;
+      padding: 5rem 2rem 4rem;
+      background: linear-gradient(160deg, #f8f9ff 0%, #eef1ff 100%);
+    }
+    .hero-badge {
+      display: inline-block;
+      background: var(--accent-light);
+      color: var(--accent);
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.3rem 0.9rem;
+      border-radius: 999px;
+      margin-bottom: 1.25rem;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+    }
+    .hero h1 {
+      font-size: clamp(2rem, 5vw, 3.25rem);
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -1px;
+      color: var(--primary);
+      margin-bottom: 1rem;
+    }
+    .hero p {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 520px;
+      margin: 0 auto 2rem;
+    }
+    .appstore-btn {
+      display: inline-block;
+      background: var(--primary);
+      color: #fff;
+      text-decoration: none;
+      padding: 0.85rem 2rem;
+      border-radius: 999px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      transition: transform 0.15s, background 0.15s;
+    }
+    .appstore-btn:hover {
+      background: var(--accent);
+      transform: translateY(-2px);
+    }
+
+    /* FEATURES */
+    .features {
+      padding: 4rem 2rem;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    .section-title {
+      text-align: center;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 2.5rem;
+      color: var(--primary);
+    }
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+      gap: 1.25rem;
+    }
+    .feature-card {
+      background: #fafafa;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.5rem 1.25rem;
+      text-align: center;
+    }
+    .feature-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+    .feature-card h3 {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: var(--primary);
+      margin-bottom: 0.4rem;
+    }
+    .feature-card p {
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    /* CONTACT */
+    .contact {
+      background: var(--accent-light);
+      padding: 4rem 2rem;
+    }
+    .contact-inner {
+      max-width: 540px;
+      margin: 0 auto;
+    }
+    .contact form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-top: 1.5rem;
+    }
+    .contact input,
+    .contact textarea {
+      padding: 0.85rem 1rem;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-size: 0.95rem;
+      font-family: inherit;
+      background: #fff;
+      outline: none;
+      transition: border-color 0.15s;
+    }
+    .contact input:focus,
+    .contact textarea:focus { border-color: var(--accent); }
+    .contact textarea { min-height: 130px; resize: vertical; }
+    .contact button[type="submit"] {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 0.85rem;
+      border-radius: var(--radius);
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, transform 0.15s;
+    }
+    .contact button[type="submit"]:hover {
+      background: #3a5ce6;
+      transform: translateY(-1px);
+    }
+    .form-success {
+      display: none;
+      text-align: center;
+      color: #16a34a;
+      font-weight: 600;
+      padding: 1rem;
+      background: #f0fdf4;
+      border-radius: var(--radius);
+      border: 1px solid #bbf7d0;
+    }
+
+    /* FOOTER */
+    footer {
+      text-align: center;
+      padding: 2rem;
+      font-size: 0.85rem;
+      color: var(--muted);
+      border-top: 1px solid var(--border);
+    }
+    footer a { color: var(--muted); }
+
+    @media (max-width: 480px) {
+      nav { padding: 0.75rem 1rem; }
+      .hero { padding: 3rem 1rem 2.5rem; }
+      .features { padding: 3rem 1rem; }
+      .contact { padding: 3rem 1rem; }
+      .lang-switcher button { padding: 0.2rem 0.45rem; font-size: 0.7rem; }
+    }
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">ikki <span>budget</span></div>
+  <div class="lang-switcher">
+    <button onclick="setLang('en')" class="active" id="btn-en">EN</button>
+    <button onclick="setLang('es')" id="btn-es">ES</button>
+    <button onclick="setLang('de')" id="btn-de">DE</button>
+    <button onclick="setLang('fr')" id="btn-fr">FR</button>
+    <button onclick="setLang('pt')" id="btn-pt">PT</button>
+    <button onclick="setLang('zh')" id="btn-zh">中文</button>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge" id="hero-badge">iOS App</div>
+  <h1 id="hero-title">Smart Budget Tracking</h1>
+  <p id="hero-sub">Take control of your personal finances with ikki budget — simple, powerful, and beautifully designed.</p>
+  <a href="https://apps.apple.com/app/id6743372656" class="appstore-btn" id="cta-btn">⬇ Download on the App Store</a>
+</section>
+
+<section class="features">
+  <h2 class="section-title" id="features-title">Everything you need</h2>
+  <div class="features-grid">
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3 id="f1-title">Budget Tracking</h3>
+      <p id="f1-desc">Create budgets and monitor spending in real time.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🤝</div>
+      <h3 id="f2-title">Expense Splitting</h3>
+      <p id="f2-desc">Split costs with friends and settle up easily.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📄</div>
+      <h3 id="f3-title">PDF Reports</h3>
+      <p id="f3-desc">Export clean reports of your finances anytime.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">💱</div>
+      <h3 id="f4-title">Multi-currency</h3>
+      <p id="f4-desc">Track expenses in any currency worldwide.</p>
+    </div>
+  </div>
+</section>
+
+<section class="contact">
+  <div class="contact-inner">
+    <h2 class="section-title" id="contact-title">Contact Us</h2>
+    <!-- Replace YOUR_FORM_ID with your Formspree form ID -->
+    <form id="contact-form" action="https://formspree.io/f/YOUR_FORM_ID" method="POST">
+      <input type="text"  name="name"    id="inp-name"    placeholder="Your name"    required />
+      <input type="email" name="email"   id="inp-email"   placeholder="Your email"   required />
+      <textarea           name="message" id="inp-message"  placeholder="Your message" required></textarea>
+      <button type="submit" id="btn-send">Send</button>
+    </form>
+    <div class="form-success" id="form-success">✅ <span id="success-msg">Message sent! We'll get back to you soon.</span></div>
+  </div>
+</section>
+
+<footer>
+  <p id="footer-text">© 2025 ikki Software. All rights reserved.</p>
+  <p style="margin-top:0.4rem"><a href="/app-ads.txt">app-ads.txt</a></p>
+</footer>
+
+<script>
+  const i18n = {
+    en: {
+      badge: "iOS App",
+      title: "Smart Budget Tracking",
+      sub: "Take control of your personal finances with ikki budget — simple, powerful, and beautifully designed.",
+      cta: "⬇ Download on the App Store",
+      featTitle: "Everything you need",
+      f1t: "Budget Tracking",       f1d: "Create budgets and monitor spending in real time.",
+      f2t: "Expense Splitting",     f2d: "Split costs with friends and settle up easily.",
+      f3t: "PDF Reports",           f3d: "Export clean reports of your finances anytime.",
+      f4t: "Multi-currency",        f4d: "Track expenses in any currency worldwide.",
+      contactTitle: "Contact Us",
+      name: "Your name", email: "Your email", message: "Your message", send: "Send",
+      success: "Message sent! We'll get back to you soon.",
+      footer: "© 2025 ikki Software. All rights reserved."
+    },
+    es: {
+      badge: "App iOS",
+      title: "Control Inteligente de Presupuesto",
+      sub: "Toma el control de tus finanzas personales con ikki budget — simple, poderosa y con un diseño cuidado.",
+      cta: "⬇ Descargar en el App Store",
+      featTitle: "Todo lo que necesitas",
+      f1t: "Control de Presupuesto",  f1d: "Crea presupuestos y monitorea tus gastos en tiempo real.",
+      f2t: "División de Gastos",      f2d: "Divide costos con amigos y liquida deudas fácilmente.",
+      f3t: "Reportes PDF",            f3d: "Exporta reportes de tus finanzas cuando quieras.",
+      f4t: "Multi-moneda",            f4d: "Registra gastos en cualquier moneda del mundo.",
+      contactTitle: "Contáctanos",
+      name: "Tu nombre", email: "Tu correo", message: "Tu mensaje", send: "Enviar",
+      success: "¡Mensaje enviado! Te responderemos pronto.",
+      footer: "© 2025 ikki Software. Todos los derechos reservados."
+    },
+    de: {
+      badge: "iOS App",
+      title: "Intelligente Budgetverwaltung",
+      sub: "Behalte deine Finanzen mit ikki budget im Griff — einfach, leistungsstark und schön gestaltet.",
+      cta: "⬇ Im App Store laden",
+      featTitle: "Alles, was du brauchst",
+      f1t: "Budgetverwaltung",      f1d: "Erstelle Budgets und überwache deine Ausgaben in Echtzeit.",
+      f2t: "Ausgabenteilung",       f2d: "Teile Kosten mit Freunden und begleiche Schulden einfach.",
+      f3t: "PDF-Berichte",          f3d: "Exportiere übersichtliche Finanzberichte jederzeit.",
+      f4t: "Multi-Währung",         f4d: "Verfolge Ausgaben in jeder Währung weltweit.",
+      contactTitle: "Kontakt",
+      name: "Dein Name", email: "Deine E-Mail", message: "Deine Nachricht", send: "Senden",
+      success: "Nachricht gesendet! Wir melden uns bald.",
+      footer: "© 2025 ikki Software. Alle Rechte vorbehalten."
+    },
+    fr: {
+      badge: "App iOS",
+      title: "Gestion Intelligente du Budget",
+      sub: "Prenez le contrôle de vos finances avec ikki budget — simple, puissant et élégant.",
+      cta: "⬇ Télécharger sur l'App Store",
+      featTitle: "Tout ce dont vous avez besoin",
+      f1t: "Suivi du Budget",       f1d: "Créez des budgets et suivez vos dépenses en temps réel.",
+      f2t: "Partage des Dépenses",  f2d: "Partagez les coûts avec vos amis et soldez facilement.",
+      f3t: "Rapports PDF",          f3d: "Exportez des rapports clairs de vos finances à tout moment.",
+      f4t: "Multi-devises",         f4d: "Suivez vos dépenses dans n'importe quelle devise mondiale.",
+      contactTitle: "Nous contacter",
+      name: "Votre nom", email: "Votre e-mail", message: "Votre message", send: "Envoyer",
+      success: "Message envoyé ! Nous vous répondrons bientôt.",
+      footer: "© 2025 ikki Software. Tous droits réservés."
+    },
+    pt: {
+      badge: "App iOS",
+      title: "Controle Inteligente de Orçamento",
+      sub: "Assuma o controle das suas finanças com ikki budget — simples, poderoso e bem projetado.",
+      cta: "⬇ Baixar na App Store",
+      featTitle: "Tudo que você precisa",
+      f1t: "Controle de Orçamento",  f1d: "Crie orçamentos e monitore gastos em tempo real.",
+      f2t: "Divisão de Despesas",    f2d: "Divida custos com amigos e acerte as contas facilmente.",
+      f3t: "Relatórios PDF",         f3d: "Exporte relatórios claros das suas finanças a qualquer hora.",
+      f4t: "Multi-moeda",            f4d: "Registre despesas em qualquer moeda do mundo.",
+      contactTitle: "Fale Conosco",
+      name: "Seu nome", email: "Seu e-mail", message: "Sua mensagem", send: "Enviar",
+      success: "Mensagem enviada! Responderemos em breve.",
+      footer: "© 2025 ikki Software. Todos os direitos reservados."
+    },
+    zh: {
+      badge: "iOS 应用",
+      title: "智能预算管理",
+      sub: "使用 ikki budget 掌控您的个人财务 — 简单、强大、设计精美。",
+      cta: "⬇ 在 App Store 下载",
+      featTitle: "功能一应俱全",
+      f1t: "预算追踪",   f1d: "创建预算，实时监控您的支出。",
+      f2t: "费用分摊",   f2d: "与朋友分摊费用，轻松结算。",
+      f3t: "PDF 报告",   f3d: "随时导出清晰的财务报告。",
+      f4t: "多币种",     f4d: "支持全球任意货币的支出记录。",
+      contactTitle: "联系我们",
+      name: "您的姓名", email: "您的邮箱", message: "您的留言", send: "发送",
+      success: "消息已发送！我们会尽快回复您。",
+      footer: "© 2025 ikki Software. 保留所有权利。"
+    }
+  };
+
+  function setLang(lang) {
+    const t = i18n[lang];
+    if (!t) return;
+    document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : lang;
+    document.getElementById('hero-badge').textContent   = t.badge;
+    document.getElementById('hero-title').textContent   = t.title;
+    document.getElementById('hero-sub').textContent     = t.sub;
+    document.getElementById('cta-btn').textContent      = t.cta;
+    document.getElementById('features-title').textContent = t.featTitle;
+    document.getElementById('f1-title').textContent = t.f1t;
+    document.getElementById('f1-desc').textContent  = t.f1d;
+    document.getElementById('f2-title').textContent = t.f2t;
+    document.getElementById('f2-desc').textContent  = t.f2d;
+    document.getElementById('f3-title').textContent = t.f3t;
+    document.getElementById('f3-desc').textContent  = t.f3d;
+    document.getElementById('f4-title').textContent = t.f4t;
+    document.getElementById('f4-desc').textContent  = t.f4d;
+    document.getElementById('contact-title').textContent  = t.contactTitle;
+    document.getElementById('inp-name').placeholder    = t.name;
+    document.getElementById('inp-email').placeholder   = t.email;
+    document.getElementById('inp-message').placeholder = t.message;
+    document.getElementById('btn-send').textContent    = t.send;
+    document.getElementById('success-msg').textContent = t.success;
+    document.getElementById('footer-text').textContent = t.footer;
+    // Update active button
+    document.querySelectorAll('.lang-switcher button').forEach(b => b.classList.remove('active'));
+    document.getElementById('btn-' + lang).classList.add('active');
+  }
+
+  // Formspree AJAX submission
+  const form = document.getElementById('contact-form');
+  form.addEventListener('submit', async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-send');
+    btn.disabled = true;
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        body: new FormData(form),
+        headers: { 'Accept': 'application/json' }
+      });
+      if (res.ok) {
+        form.style.display = 'none';
+        document.getElementById('form-success').style.display = 'block';
+      } else {
+        btn.disabled = false;
+      }
+    } catch {
+      btn.disabled = false;
+    }
+  });
+
+  // Auto-detect browser language
+  const browserLang = navigator.language.slice(0, 2);
+  const supported = ['en','es','de','fr','pt','zh'];
+  if (supported.includes(browserLang)) setLang(browserLang);
+</script>
+
+</body>
+</html>
